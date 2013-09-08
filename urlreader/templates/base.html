@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/styles.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link href="assets/css/bootstrap-responsive.css" rel="stylesheet"> -->
+    <script type="text/javascript" src="{{ STATIC_URL }}javascript/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}javascript/common.js"></script>
+  </head>
+  <body>
+    <div class="container tm20">
+        <div class="header">
+            <h1>Meta Data Reader</h1>
+        </div>
+        <div class="main-url">
+            <input type="text" id="InputUrl" class="input_url" placeholder="Enter your url here">
+            <input type="button"  id="SubmitUrl" class="btn btn-inverse" value="Sumbit">
+        </div>
+        <div id="content">
+        <div class="loader hidden"> </div>
+        {% block content %} {% endblock %}
+        </div>
+    </div><!-- container -->
+  </body>
+</html>
+

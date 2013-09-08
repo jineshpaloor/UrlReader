@@ -1,0 +1,9 @@
+<h2 class="meta-header">Details for : {{ url }} </h2>
+<div class="meta-details">
+    <p><strong>Title:</strong> {{ title }}</p>
+    <p><strong>Meta Description:</strong> {{ description }}</p>
+    <p><strong>Meta Keywords:</strong> {{ keywords }}</p>
+</div>
+<input type="button" class="edit-metadata btn btn-inverse" value="Edit">
+
+{% include "meta_form.html" %}
