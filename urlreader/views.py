@@ -14,20 +14,17 @@ def home(request):
                               context_instance=RequestContext(request))
 
 def get_metadata(request, id=None):
-    print 'get meta data...'
     if request.method == 'GET':
         input_url = request.GET.get('input_url').strip()
         meta_data = MetaData.objects.filter(url=input_url)
 
         if meta_data.exists():
-            print 'meta data exists..'
             meta_info = meta_data[0].__dict__
             meta_info.pop('_state')
         else:
             meta_info = get_meta_details(input_url)
 
     elif request.method in ['POST', 'PUT']:
-        print 'post..', request.body
         data = simplejson.loads(request.body)
         url = data.get('url').strip()
         title = data.get('title').strip()
@@ -36,7 +33,6 @@ def get_metadata(request, id=None):
 
         metadata = MetaData.objects.filter(url=url)
         if metadata.exists():
-            print 'url exists...', metadata.count()
             metadata.update(url=url, title=title, description=description, keywords=keywords)
             metadata = metadata[0]
         else:
@@ -44,8 +40,6 @@ def get_metadata(request, id=None):
 
         meta_info = metadata.__dict__
         meta_info.pop('_state')
-        print 'meta info saved...', metadata.__dict__
 
     json = simplejson.dumps(meta_info)
-    print meta_info
     return HttpResponse(json, mimetype='application/json')

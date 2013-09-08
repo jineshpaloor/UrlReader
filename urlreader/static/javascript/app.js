@@ -13,7 +13,7 @@ $(document).ready(function() {
 
     });
 
-    //define view to show metadata - render todoitem to html element
+    //define view to show metadata - render metadata html element
     var MetaDataView = Backbone.View.extend({
 
         el: $("div.meta-data-container"),
@@ -38,10 +38,9 @@ $(document).ready(function() {
         '<input type="button" class="edit-metadata btn btn-inverse" value="Edit">'),
 
         render: function (){
-            this.$el.show();
-            console.log('metadata view render called.....');
             var attributes = this.model.toJSON();
             this.$el.html(this.template(attributes));
+            this.$el.show();
         },
 
         editMetadata: function (){
@@ -91,24 +90,21 @@ $(document).ready(function() {
             '</form>'),
 
         render: function (){
-            console.log('metaform view render called.....');
             var attributes = this.model.toJSON();
             this.$el.html(this.template(attributes));
             this.$el.show();
         },
 
         formSubmit: function(){
-             console.log("form submitted...");
              var title = this.$el.find('#id_title').val();
              var url = this.$el.find('#id_url').val();
              var description = this.$el.find('#id_description').val();
              var keywords = this.$el.find('#id_keywords').val();
-             console.log("saving model...");
+             var that = this;
              this.model.save({title: title, url: url, description: description, keywords: keywords}, {success: function (){
-                 console.log("model saved...", that.model);
-                 //var metadataview = new MetaDataView({model: this.model});
+                 that.$el.hide();
+                 appview.metadataview.render();
              }});
-             console.log("after model saved...");
         }
     });
 
@@ -129,6 +125,7 @@ $(document).ready(function() {
             var input_url = this.input.val();
             var metadata = new MetaData({url: input_url});
             var metadataview = new MetaDataView({model: metadata});
+            appview.metadataview = metadataview;
         }
 
     });
@@ -143,46 +140,4 @@ $(document).ready(function() {
 
     var appview = new AppView({});
 
-    //$("#SubmitUrl").click(function (){
-        //$(".loader").show();
-        //var input_url = $("#InputUrl").val();
-        //var content = $("#content");
-        //$.ajax({
-            //url:"/get_metadata/",
-            //type: 'GET',
-            //data: {'input_url': input_url},
-            //success: function (resp){
-                //$(".loader").hide();
-                //if (resp.success){
-                    //$(content).html(resp.html);
-                //}else{
-                    //console.log('error in url..');
-                //}
-            //}
-        //});
-    //});
-//
-    //$("#MetaFormSubmit").live('click', function (e){
-        //e.preventDefault();
-        //$(".loader").show();
-        //var form = $("#MetaForm");
-        //var content = $("#content");
-        //$.ajax({
-            //url:"/update_metadata/",
-            //type: 'POST',
-            //data: $(form).serialize(),
-            //dataType: 'json',
-            //success: function (resp){
-                //$(".loader").hide();
-                //$(content).html(resp.html);
-            //}
-        //});
-    //});
-//
-    //$(".edit-metadata").live('click', function (e){
-        //$(this).hide();
-        //$(".meta-details").hide();
-        //$(".meta-form").show();
-    //});
-//
 });

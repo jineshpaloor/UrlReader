@@ -3,7 +3,11 @@ import requests
 
 
 def get_meta_details(input_url):
-    r = requests.get(input_url)
+    try:
+        r = requests.get(input_url)
+    except:
+        return {'url': input_url, 'description': '', 'title':'', 'keywords':''}
+
     soup = BeautifulSoup(r.content, "html")
 
     title = soup.title.string
