@@ -37,47 +37,4 @@ $(document).ready(function() {
         }
     });
 
-    $("#SubmitUrl").click(function (){
-        $(".loader").show();
-        var input_url = $("#InputUrl").val();
-        var content = $("#content");
-        $.ajax({
-            url:"/get_metadata/",
-            type: 'GET',
-            data: {'input_url': input_url},
-            success: function (resp){
-                $(".loader").hide();
-                if (resp.success){
-                    $(content).html(resp.html);
-                }else{
-                    console.log('error in url..');
-                }
-            }
-        });
-    });
-
-    $("#MetaFormSubmit").live('click', function (e){
-        e.preventDefault();
-        $(".loader").show();
-        var form = $("#MetaForm");
-        var content = $("#content");
-        $.ajax({
-            url:"/update_metadata/",
-            type: 'POST',
-            data: $(form).serialize(),
-            dataType: 'json',
-            success: function (resp){
-                $(".loader").hide();
-                $(content).html(resp.html);
-            }
-        });
-    });
-
-    $(".edit-metadata").live('click', function (e){
-        $(this).hide();
-        $(".meta-data-container").hide();
-        $(".meta-form-container").show();
-    });
-
 });
-

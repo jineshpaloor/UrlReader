@@ -1,14 +1,12 @@
-<div class="meta-form hidden">
-    <form method="POST" id="MetaForm" class="form-horizontal" action="{% url 'update-meta-data' %}">
-      {% for field in form %}
-      <div class="control-group">
-          <label class="control-label" for="inputEmail">{{ field.label_tag }} </label>
-        <div class="controls">
-            {{ field.errors }}
-            {{ field }}
-        </div>
-      </div>
-      {% endfor %}
-    <input type="button" class="btn btn-inverse" id="MetaFormSubmit" value="Submit">
-    </form>
-</div>
+<form method="POST" id="MetaForm" class="form-horizontal" action="{% url 'update-meta-data' %}">
+  {% for field in form %}
+  <div class="control-group">
+      <label class="control-label" for="inputEmail">{{ field.label_tag }} </label>
+    <div class="controls">
+        {{ field.errors }}
+        {{ field }}
+    </div>
+  </div>
+  {% endfor %}
+<input type="button" class="btn btn-inverse" id="MetaFormSubmit" value="Submit">
+</form>

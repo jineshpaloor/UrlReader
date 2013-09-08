@@ -13,12 +13,30 @@ def home(request):
     return render_to_response('home.html',
                               context_instance=RequestContext(request))
 
+def get_metadata(request):
+    print 'get meta data...'
+    if request.method == 'GET':
+        input_url = request.GET.get('input_url').strip()
+        meta_data = MetaData.objects.filter(url=input_url)
+
+        if meta_data.exists():
+            print 'meta data exists..'
+            meta_info = meta_data[0].__dict__
+            meta_info.pop('_state')
+        else:
+            meta_info = get_meta_details(input_url)
+
+    json = simplejson.dumps(meta_info)
+    print meta_info
+    return HttpResponse(json, mimetype='application/json')
+
 def get_meta_data(request):
     if request.method == 'GET' and request.is_ajax():
         input_url = request.GET.get('input_url').strip()
         meta_data = MetaData.objects.filter(url=input_url)
 
         if meta_data.exists():
+            print 'meta data exists..'
             meta_info = meta_data[0].__dict__
         else:
             meta_info = get_meta_details(input_url)
