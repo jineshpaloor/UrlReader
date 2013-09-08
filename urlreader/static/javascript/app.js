@@ -2,7 +2,7 @@ $(document).ready(function() {
 
     var MetaData = Backbone.Model.extend({
 
-        urlRoot: '/get_metadata',
+        urlRoot: '/get_metadata/',
 
         defaults: {
             url: '',
@@ -17,6 +17,10 @@ $(document).ready(function() {
     var MetaDataView = Backbone.View.extend({
 
         el: $("div.meta-data-container"),
+
+        events: {
+            "click .edit-metadata": "editMetadata"
+        },
 
         initialize: function (){
             this.listenTo(this.model, 'change', this.render);
@@ -34,18 +38,77 @@ $(document).ready(function() {
         '<input type="button" class="edit-metadata btn btn-inverse" value="Edit">'),
 
         render: function (){
+            this.$el.show();
+            console.log('metadata view render called.....');
             var attributes = this.model.toJSON();
-            console.log('rendering meta data view..', attributes);
             this.$el.html(this.template(attributes));
+        },
+
+        editMetadata: function (){
+            this.$el.hide();
+            var metaform = new MetaFormView({model:this.model});
+            metaform.render();
         }
+
     });
 
     var MetaFormView = Backbone.View.extend({
 
         el: $("div.meta-form-container"),
 
-        render: function (data){
-            console.log('rendering meta form view..');
+        events: {
+            "click #MetaFormSubmit": "formSubmit"
+        },
+
+        template: _.template('<h2 class="meta-header">' +
+                      'Details for : <%= url %> </h2>' +
+            '<form method="POST" id="MetaForm" class="form-horizontal" action="/update_metadata/">' +
+              '<div class="control-group">' +
+                  '<label class="control-label" for="inputEmail"><label for="id_url">Url</label> </label>' +
+                '<div class="controls">' +
+                    '<input id="id_url" maxlength="200" name="url" type="text" value="<%= url %>">' +
+                '</div>' +
+              '</div>' +
+              '<div class="control-group">' +
+                  '<label class="control-label" for="inputEmail"><label for="id_title">Title</label> </label>' +
+                '<div class="controls">' +
+                    '<input id="id_title" maxlength="100" name="title" type="text" value="<%= title %>">' +
+                '</div>' +
+              '</div>' +
+              '<div class="control-group">' +
+                  '<label class="control-label" for="inputEmail"><label for="id_description">Description</label> </label>' +
+                '<div class="controls">' +
+                    '<textarea cols="40" id="id_description" name="description" rows="10"><%= description %></textarea>' +
+                '</div>' +
+              '</div>' +
+              '<div class="control-group">' +
+                  '<label class="control-label" for="inputEmail"><label for="id_keywords">Keywords</label> </label>' +
+                '<div class="controls">' +
+                    '<textarea cols="40" id="id_keywords" name="keywords" rows="10"><%= keywords %></textarea>' +
+                '</div>' +
+              '</div>' +
+            '<input type="button" class="btn btn-inverse" id="MetaFormSubmit" value="Submit">' +
+            '</form>'),
+
+        render: function (){
+            console.log('metaform view render called.....');
+            var attributes = this.model.toJSON();
+            this.$el.html(this.template(attributes));
+            this.$el.show();
+        },
+
+        formSubmit: function(){
+             console.log("form submitted...");
+             var title = this.$el.find('#id_title').val();
+             var url = this.$el.find('#id_url').val();
+             var description = this.$el.find('#id_description').val();
+             var keywords = this.$el.find('#id_keywords').val();
+             console.log("saving model...");
+             this.model.save({title: title, url: url, description: description, keywords: keywords}, {success: function (){
+                 console.log("model saved...", that.model);
+                 //var metadataview = new MetaDataView({model: this.model});
+             }});
+             console.log("after model saved...");
         }
     });
 

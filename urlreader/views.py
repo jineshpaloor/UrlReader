@@ -13,7 +13,7 @@ def home(request):
     return render_to_response('home.html',
                               context_instance=RequestContext(request))
 
-def get_metadata(request):
+def get_metadata(request, id=None):
     print 'get meta data...'
     if request.method == 'GET':
         input_url = request.GET.get('input_url').strip()
@@ -26,46 +26,26 @@ def get_metadata(request):
         else:
             meta_info = get_meta_details(input_url)
 
+    elif request.method in ['POST', 'PUT']:
+        print 'post..', request.body
+        data = simplejson.loads(request.body)
+        url = data.get('url').strip()
+        title = data.get('title').strip()
+        description = data.get('description').strip()
+        keywords = data.get('keywords').strip()
+
+        metadata = MetaData.objects.filter(url=url)
+        if metadata.exists():
+            print 'url exists...', metadata.count()
+            metadata.update(url=url, title=title, description=description, keywords=keywords)
+            metadata = metadata[0]
+        else:
+            metadata = MetaData.objects.create(url=url, title=title, description=description, keywords=keywords)
+
+        meta_info = metadata.__dict__
+        meta_info.pop('_state')
+        print 'meta info saved...', metadata.__dict__
+
     json = simplejson.dumps(meta_info)
     print meta_info
-    return HttpResponse(json, mimetype='application/json')
-
-def get_meta_data(request):
-    if request.method == 'GET' and request.is_ajax():
-        input_url = request.GET.get('input_url').strip()
-        meta_data = MetaData.objects.filter(url=input_url)
-
-        if meta_data.exists():
-            print 'meta data exists..'
-            meta_info = meta_data[0].__dict__
-        else:
-            meta_info = get_meta_details(input_url)
-
-        form = MetaDataForm(initial=meta_info)
-        meta_info.update({'form': form})
-
-        html = render_to_string('meta_info.html', meta_info)
-        data = {'success': True, 'html': html}
-    else:
-        data = {'success': False}
-
-    json = simplejson.dumps(data)
-    return HttpResponse(json, mimetype='application/json')
-
-def update_meta_data(request):
-    if request.method == 'POST' and request.is_ajax():
-        form = MetaDataForm(data=request.POST)
-        if form.is_valid():
-            meta_data = form.save()
-            meta_info = meta_data.__dict__
-            meta_info.update({'form': form})
-            html = render_to_string('meta_info.html', meta_info)
-        else:
-            html = render_to_string('meta_form.html', {'form':form})
-    else:
-        form = MetaDataForm()
-        html = render_to_string('meta_form.html', {'form':form})
-
-    data = {'html': html}
-    json = simplejson.dumps(data)
     return HttpResponse(json, mimetype='application/json')
